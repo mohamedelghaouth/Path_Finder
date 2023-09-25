@@ -27,7 +27,7 @@
     <div id="container">
       <div id="nav" class="row">
         <ul id="nav-list">
-          <li id="logo"><h3>Path Finder</h3></li>
+          <li id="logo"><div><h3>Path Finder</h3></div></li>
           <li>
             <select
               name="algorithm"
@@ -58,12 +58,16 @@
               <option value="swarm">Swarm Algorithm</option>
             </select>
           </li>
+          <li ><button class="visualizeButton">Visualize PAth Finding</button></li>
+          <li>
+            <button class="visualizeButton">Visualize maze generation</button>
+          </li>
         </ul>
       </div>
       <div id="options" class="row"></div>
       <div id="title" class="row"></div>
       <div id="map" class="row"></div>
     </div>
-    <script src="index.js"></script>
+    <script src="index.js" type="module"></script>
   </body>
 </html>
