@@ -58,9 +58,12 @@
               <option value="swarm">Swarm Algorithm</option>
             </select>
           </li>
-          <li ><button class="visualizeButton">Visualize PAth Finding</button></li>
+          <li ><button id="path-finding-button" class="visualizeButton">Visualize Path Finding</button></li>
           <li>
-            <button class="visualizeButton">Visualize maze generation</button>
+            <button id="maze-generation-button" class="visualizeButton">Visualize maze generation</button>
+          </li>
+          <li>
+            <button id="clear-button" class="visualizeButton">clear</button>
           </li>
         </ul>
       </div>
@@ -68,6 +71,9 @@
       <div id="title" class="row"></div>
       <div id="map" class="row"></div>
     </div>
-    <script src="index.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="node.js"></script>
+    <script src="map.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>

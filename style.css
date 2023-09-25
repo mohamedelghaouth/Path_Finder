@@ -69,13 +69,3 @@ li {
   color: white;
   background-color: green;
 }
-
-.target{
-  background-image: url('public/circle.svg');
-  background-repeat: no-repeat;
-}
-
-.start{
-  background-image: url('public/triangletwo-right.svg');
-  background-repeat: no-repeat;
-}

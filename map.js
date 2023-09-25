@@ -1,6 +1,4 @@
-import { Node } from "./node.js";
-
-export class ProjectMap {
+ class ProjectMap {
   constructor() {
     this.map = new Map();
     this.domElement = this.initializeDomElement();
@@ -9,10 +7,14 @@ export class ProjectMap {
     this.blockWidth = 25;
     this.mapHeight = this.getMapHeight();
     this.mapWidth = this.getMapWidth();
-    this.targetLine = this.blockHeight * 13;
-    this.targetColumn = this.blockWidth * 55;
-    this.startLine = this.blockHeight * 13;
-    this.startColumn = this.blockWidth * 15;
+    this.targetLine =
+      this.blockHeight * Math.floor(this.mapHeight / (2 * this.blockHeight));
+    this.targetColumn =
+      this.blockWidth * Math.floor(this.mapWidth / (3 * this.blockWidth)) * 2;
+    this.startLine =
+      this.blockHeight * Math.floor(this.mapHeight / (2 * this.blockHeight));
+    this.startColumn =
+      this.blockWidth * Math.floor(this.mapWidth / (4 * this.blockWidth));
   }
 
   getMapHeight() {
@@ -35,52 +37,6 @@ export class ProjectMap {
     let numberOfColumn = contWidth / blockWidth;
 
     return blockWidth * numberOfColumn;
-  }
-
-  initializeDomElement() {
-    let domElement = document.getElementById("map");
-    domElement.onmousedown = this.setMouseDown.bind(this);
-    domElement.onmouseup = this.setMouseUp.bind(this);
-    return domElement;
-  }
-
-  setMouseDown(e) {
-    this.isMouseDown = true;
-    if (e.target.id !== "map") {
-      this.updateNodeWallState(e);
-    }
-  }
-
-  setMouseUp() {
-    this.isMouseDown = false;
-  }
-
-  addClickEventListener() {
-    const blocks = document.querySelectorAll(".block");
-
-    blocks.forEach((block) => {
-      block.onmouseenter = this.updateNodeWallState.bind(this);
-    });
-  }
-
-  updateNodeWallState(e) {
-    if (this.isMouseDown === false) {
-      return;
-    }
-
-    let block = document.getElementById(e.target.id);
-    let node = this.getNode(e.target.id);
-    console.log("🚀 ~ file: map.js:73 ~ ProjectMap ~ updateNodeWallState ~ node:", node)
-
-    if (node.isTarget || node.isStart) {
-        return;
-    }else if (node.isWall) {
-      block.style.backgroundColor = "white";
-    } else {
-      block.style.backgroundColor = "black";
-    }
-
-    node.switchWallState();
   }
 
   /**
@@ -128,6 +84,12 @@ export class ProjectMap {
     return line === this.startLine && column === this.startColumn;
   }
 
+  clearMap(){
+    this.domElement.innerHTML = ''
+    this.map = new Map()
+    this.createMap()
+  }
+
   createMap() {
     let tmp;
 
@@ -138,21 +100,23 @@ export class ProjectMap {
       for (let column = 0; column < this.mapWidth; column += this.blockWidth) {
         if (this.isTarget(line, column)) {
           tmp += `
-            <div id = "${line}-${column}" class="block target"></div>
+            <div id = "${line}-${column}" class="block">
+              <img id="target" src="./public/circle.svg" draggable="true">
+            </div>
            `;
-           this.addNewNode(line, column, true, false);
-
+          this.addNewNode(line, column, true, false);
         } else if (this.isStart(line, column)) {
           tmp += `
-            <div id = "${line}-${column}" class="block start"></div>
+            <div id = "${line}-${column}" class="block" ">
+              <img id="start" src="./public/triangletwo-right.svg" draggable="true">
+            </div>
            `;
-           this.addNewNode(line, column, false, true);
-
+          this.addNewNode(line, column, false, true);
         } else {
           tmp += `
                  <div id = "${line}-${column}" class="block"></div>
                 `;
-                this.addNewNode(line, column, false, false);
+          this.addNewNode(line, column, false, false);
         }
       }
       tmp += `</div>`;
@@ -160,5 +124,112 @@ export class ProjectMap {
     }
 
     this.addClickEventListener();
+  }
+
+  initializeDomElement() {
+    let domElement = document.getElementById("map");
+    domElement.onmousedown = this.setMouseDown.bind(this);
+    domElement.onmouseup = this.setMouseUp.bind(this);
+    return domElement;
+  }
+
+  setMouseDown(e) {
+    let elementId = e.target.id;
+    if (elementId === "start" || elementId === "target") {
+      return;
+    }
+    this.isMouseDown = true;
+    if (elementId !== "map") {
+      this.updateNodeWallState(e);
+    }
+  }
+
+  setMouseUp() {
+    this.isMouseDown = false;
+  }
+
+  updateNodeWallState(e) {
+    if (this.isMouseDown === false) {
+      return;
+    }
+
+    let block = document.getElementById(e.target.id);
+    let node = this.getNode(e.target.id);
+
+    if (node.isTarget || node.isStart) {
+      return;
+    } else if (node.isWall) {
+        block.style.backgroundColor = "white"
+    } else {
+        block.style.backgroundColor = "black"
+    }
+
+    node.switchWallState();
+  }
+
+  addClickEventListener() {
+    const blocks = document.querySelectorAll(".block");
+
+    blocks.forEach((block) => {
+      block.onmouseenter = this.updateNodeWallState.bind(this);
+      block.ondrop = this.drop.bind(this);
+      //block.allowDrop = this.allowDrop.bind(this);
+      block.ondragover = this.dragover_handler.bind(this);
+    });
+    const start = document.getElementById("start");
+    const target = document.getElementById("target");
+
+    start.ondragstart = this.drag.bind(this);
+    target.ondragstart = this.drag.bind(this);
+  }
+
+  allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+  }
+
+  dragover_handler(ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = "move";
+  }
+
+  drop(ev) {
+    ev.preventDefault();
+
+    if (
+      ev.target.id === "start" ||
+      ev.target.id === "target" ||
+      this.map.get(ev.target.id).isWall
+    ) {
+      return;
+    } else {
+      var data = ev.dataTransfer.getData("text");
+      ev.target.appendChild(document.getElementById(data));
+    }
+  }
+
+  createTestMaze(e) {
+    let middleColumn = this.blockWidth * Math.trunc(this.mapWidth / (2*this.blockWidth));
+    let blocks = []
+
+    for (let line = 0; line < this.mapHeight; line += this.blockHeight) {
+      let id = `${line}-${middleColumn}`;
+
+      let block = document.getElementById(id);
+      let node = this.getNode(id);
+
+      block.classList.add("wall");
+      blocks.push(block)
+
+      node.switchWallState();
+    }
+    anime({
+        targets: '.wall',
+        backgroundColor: '#000000',
+        delay: anime.stagger(100, {easing: 'easeOutQuad'}) // increase delay by 100ms for each elements.
+      })
   }
 }

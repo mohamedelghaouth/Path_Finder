@@ -1,4 +1,4 @@
-export class Node {
+class Node {
   static topLeftKey = 1;
   static topKey = 2;
   static topRightKey = 3;
