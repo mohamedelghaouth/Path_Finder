@@ -1,4 +1,4 @@
- class ProjectMap {
+class ProjectMap {
   constructor() {
     this.map = new Map();
     this.domElement = this.initializeDomElement();
@@ -84,10 +84,10 @@
     return line === this.startLine && column === this.startColumn;
   }
 
-  clearMap(){
-    this.domElement.innerHTML = ''
-    this.map = new Map()
-    this.createMap()
+  clearMap() {
+    this.domElement.innerHTML = "";
+    this.map = new Map();
+    this.createMap();
   }
 
   createMap() {
@@ -159,9 +159,9 @@
     if (node.isTarget || node.isStart) {
       return;
     } else if (node.isWall) {
-        block.style.backgroundColor = "white"
+      block.style.backgroundColor = "white";
     } else {
-        block.style.backgroundColor = "black"
+      block.style.backgroundColor = "black";
     }
 
     node.switchWallState();
@@ -207,13 +207,34 @@
       return;
     } else {
       var data = ev.dataTransfer.getData("text");
+      if (data === "start") {
+        this.updateStartPosition(ev.target.id);
+      }
+
+      if (data === "target") {
+        this.updateTargetPosition(ev.target.id);
+      }
+
       ev.target.appendChild(document.getElementById(data));
     }
   }
 
+  updateStartPosition(elementId) {
+    let node = this.map.get(elementId);
+    this.startLine = node.line;
+    this.startColumn = node.column;
+  }
+
+  updateTargetPosition(elementId) {
+    let node = this.map.get(elementId);
+    this.targetLine = node.line;
+    this.targetColumn = node.column;
+  }
+
   createTestMaze(e) {
-    let middleColumn = this.blockWidth * Math.trunc(this.mapWidth / (2*this.blockWidth));
-    let blocks = []
+    let middleColumn =
+      this.blockWidth * Math.trunc(this.mapWidth / (2 * this.blockWidth));
+    let blocks = [];
 
     for (let line = 0; line < this.mapHeight; line += this.blockHeight) {
       let id = `${line}-${middleColumn}`;
@@ -222,14 +243,14 @@
       let node = this.getNode(id);
 
       block.classList.add("wall");
-      blocks.push(block)
+      blocks.push(block);
 
       node.switchWallState();
     }
     anime({
-        targets: '.wall',
-        backgroundColor: '#000000',
-        delay: anime.stagger(100, {easing: 'easeOutQuad'}) // increase delay by 100ms for each elements.
-      })
+      targets: ".wall",
+      backgroundColor: "#000000",
+      delay: anime.stagger(100, { easing: "easeOutQuad" }), // increase delay by 100ms for each elements.
+    });
   }
 }
