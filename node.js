@@ -1,14 +1,19 @@
 class Node {
-  static topLeftKey = 1;
-  static topKey = 2;
-  static topRightKey = 3;
-  static leftKey = 4;
-  static rightKey = 5;
-  static bottomLeftKey = 6;
-  static bottomKey = 7;
-  static bottomRightKey = 8;
+  static topKey = 1;
+  static leftKey = 2;
+  static rightKey = 3;
+  static bottomKey = 4;
 
-  constructor(line, column, isTarget, isStart, blockHeight, blockWidth, mapHeight, mapWidth) {
+  constructor(
+    line,
+    column,
+    isTarget,
+    isStart,
+    blockHeight,
+    blockWidth,
+    mapHeight,
+    mapWidth
+  ) {
     this.line = line;
     this.column = column;
     this.id = line + "-" + column;
@@ -16,21 +21,24 @@ class Node {
     this.isWall = false;
     this.isTarget = isTarget;
     this.isStart = isStart;
-    this.isPArtOfTheShortPath = false;
+    this.isPartOfTheShortPath = false;
+    this.blockHeight = blockHeight;
+    this.blockWidth = blockWidth;
     this.setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth);
   }
 
   switchWallState() {
     this.isWall = !this.isWall;
   }
+
   setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth) {
     let hasTop = this.line - blockHeight >= 0;
 
     let hasBottom = this.line + blockWidth <= mapHeight;
 
-    let hasLeft = this.column + blockWidth <= mapWidth;
+    let hasRight = this.column + blockWidth <= mapWidth;
 
-    let hasRight = this.column - blockWidth >= 0;
+    let hasLeft = this.column - blockWidth >= 0;
 
     this.neighbors = new Map();
 
@@ -43,49 +51,123 @@ class Node {
     if (hasRight) {
       this.neighbors.set(
         Node.rightKey,
-        `${this.line}-${this.column - blockWidth}`
+        `${this.line}-${this.column + blockWidth}`
       );
     }
     if (hasLeft) {
       this.neighbors.set(
         Node.leftKey,
-        `${this.line}-${this.column + blockWidth}`
+        `${this.line}-${this.column - blockWidth}`
       );
     }
     if (hasBottom) {
       this.neighbors.set(
-        Node.leftKey,
+        Node.bottomKey,
         `${this.line + blockWidth}-${this.column}`
       );
     }
+  }
 
-    if (hasTop && hasRight) {
-      this.neighbors.set(
-        Node.topRightKey,
-        `${this.line - blockHeight}-${this.column - blockWidth}`
-      );
-    }
+  getUnvisitedNeighbors(map) {
+    let unvisitedNeighbors = [];
+    const neighbors = [...this.neighbors.values()];
 
-    if (hasTop && hasLeft) {
-      this.neighbors.set(
-        Node.topLeftKey,
-        `${this.line - blockHeight}-${this.column + blockWidth}`
-      );
-    }
+    neighbors.forEach((neighborId) => {
+      let node = map.get(neighborId);
+      if (!node.isVisited) {
+        unvisitedNeighbors.push(node);
+      }
+    });
 
-    if (hasBottom && hasRight) {
-      this.neighbors.set(
-        Node.bottomRightKey,
-        `${this.line + blockWidth}-${this.column - blockWidth}`
-      );
-    }
+    return unvisitedNeighbors;
+  }
 
-    if (hasBottom && hasLeft) {
-      this.neighbors.set(
-        Node.bottomLeftKey,
-        `${this.line + blockWidth}-${this.column + blockWidth}`
-      );
+  makeCurrentInMazeGeneration() {
+    let block = document.getElementById(this.id);
+    block.classList.add("current");
+  }
+
+  removeCurrentInMazeGeneration() {
+    let block = document.getElementById(this.id);
+    block.classList.remove("current");
+  }
+
+  removeWall() {
+    this.isWall = false;
+    let block = document.getElementById(this.id);
+    block.classList.remove("wall");
+    block.classList.add("empty");
+  }
+
+  setWall() {
+    this.isWall = true;
+    let block = document.getElementById(this.id);
+    block.classList.add("wall");
+    block.classList.remove("empty");
+  }
+
+  thereIsSpaceInTopDirection() {
+    return this.line - this.blockHeight * 2 >= 0;
+  }
+  thereIsSpaceInLeftDirection() {
+    return this.column - this.blockWidth * 2 >=0;
+  }
+  thereIsSpaceInRightDirection(mapWidth) {
+    return this.column + this.blockWidth * 2 <= mapWidth;
+  }
+  thereIsSpaceInBottomDirection(mapHeight) {
+    return this.line + this.blockHeight * 2 <= mapHeight;
+  }
+
+  secondElementInThisDirectionIsWall(direction, map) {
+    let neighborInThisDirectionId = this.neighbors.get(direction);
+
+    let neighborInThisDirection = map.get(neighborInThisDirectionId);
+
+
+    let neighborNeighborInThisDirectionId =
+      neighborInThisDirection.neighbors.get(direction);
+
+    let secondNeighborInThisDirection = map.get(
+      neighborNeighborInThisDirectionId
+    );
+   
+
+    return (
+      neighborInThisDirection.isWall && secondNeighborInThisDirection.isWall
+    );
+  }
+
+  setTwoNextNeighborInThisDirectionToEmpty(direction, map) {
+    let neighborInThisDirectionId = this.neighbors.get(direction);
+    let neighborInThisDirection = map.get(neighborInThisDirectionId);
+    neighborInThisDirection.removeWall();
+
+    let neighborNeighborInThisDirectionId =
+      neighborInThisDirection.neighbors.get(direction);
+    let secondNeighborInThisDirection = map.get(
+      neighborNeighborInThisDirectionId
+    );
+
+    secondNeighborInThisDirection.removeWall();
+
+    return secondNeighborInThisDirection;
+  }
+
+  static getDirection() {
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        // Swap array[i] and array[j]
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
+    return shuffleArray([
+      Node.topKey,
+      Node.leftKey,
+      Node.rightKey,
+      Node.bottomKey,
+    ]);
+  }
 }
-}
-

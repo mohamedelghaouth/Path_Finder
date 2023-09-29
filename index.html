@@ -27,7 +27,9 @@
     <div id="container">
       <div id="nav" class="row">
         <ul id="nav-list">
-          <li id="logo"><div><h3>Path Finder</h3></div></li>
+          <li id="logo">
+            <div><h3>Path Finder</h3></div>
+          </li>
           <li>
             <select
               name="algorithm"
@@ -35,11 +37,7 @@
               class="select-list"
               aria-placeholder="Algorithms"
             >
-              <option value="" disabled selected hidden>
-                Choose an Algorithms
-              </option>
-
-              <option value="djikistra">djikistra</option>
+              <option value="djikistra" selected>djikistra</option>
               <option value="asearch">A* search</option>
               <option value="swarm">Swarm Algorithm</option>
             </select>
@@ -47,20 +45,24 @@
           <li>
             <select
               name="algorithm"
-              id="maze"
+              id="maze-algo"
               class="select-list"
               aria-placeholder="Algorithms"
             >
-              <option value="" disabled selected hidden>Choose a Maze</option>
-
-              <option value="djikistra">Recursive division</option>
-              <option value="asearch">A* search</option>
-              <option value="swarm">Swarm Algorithm</option>
+              <option value="random-maze" selected>Random Maze</option>
+              <option value="depth-first-search">Depth-first search</option>
+              <option value="recursive-division">Recursive division</option>
             </select>
           </li>
-          <li ><button id="path-finding-button" class="visualizeButton">Visualize Path Finding</button></li>
           <li>
-            <button id="maze-generation-button" class="visualizeButton">Visualize maze generation</button>
+            <button id="path-finding-button" class="visualizeButton">
+              Visualize Path Finding
+            </button>
+          </li>
+          <li>
+            <button id="maze-generation-button" class="visualizeButton">
+              Visualize maze generation
+            </button>
           </li>
           <li>
             <button id="clear-button" class="visualizeButton">clear</button>
@@ -71,7 +73,12 @@
       <div id="title" class="row"></div>
       <div id="map" class="row"></div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"
+      integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="node.js"></script>
     <script src="map.js"></script>
     <script src="index.js"></script>
