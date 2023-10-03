@@ -52,3 +52,10 @@ function isTarget(line, column) {
 function isStart(line, column) {
   return line === startLine && column === startColumn;
 }
+
+function getStartNode() {
+  return getNodeByLineAndColumn(startLine, startColumn);
+}
+function getTargetNode() {
+  return getNodeByLineAndColumn(targetLine, targetColumn);
+}

@@ -1,19 +1,21 @@
 import { recursiveDivisionMaze } from "./recursive-division.js";
 import { deptFirstSearchMaze } from "./depth-first-search.js";
 import { randomMaze } from "./random-maze.js";
-import { clearFromWalls } from "../mapHelper.js";
+import { clearMap } from "../mapHelper.js";
 
-export function visualizeMaze() {
-  clearFromWalls();
+export async function visualizeMaze() {
+  clearMap();
+  disableAll()
   let selectValue = document.getElementById("maze-algo").value;
 
   if (selectValue === "recursive-division") {
-    recursiveDivisionMaze();
+    await recursiveDivisionMaze();
   }
   if (selectValue === "depth-first-search") {
-    deptFirstSearchMaze();
+    await deptFirstSearchMaze();
   }
   if (selectValue === "random-maze") {
     randomMaze();
   }
+  enableAll()
 }

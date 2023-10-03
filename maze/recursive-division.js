@@ -2,7 +2,7 @@ import { getRandomArrayDivisibleBy25 } from "./helper.js";
 
 export async function recursiveDivisionMaze() {
   await setBordersToWalls();
-  recursiveDivision(0, mapHeight, 0, mapWidth, V_Orientation);
+  await recursiveDivision(0, mapHeight, 0, mapWidth, V_Orientation);
 }
 
 async function setBordersToWalls() {

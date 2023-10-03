@@ -2,11 +2,12 @@ import { addClickEventListener } from "./eventHelper.js";
 
 export function clearMap() {
   const blocks = document.querySelectorAll(".block");
+  visualizingPathFinding = false
+
 
   blocks.forEach((block) => {
     let node = map.get(block.id);
-    node.isVisited = false;
-    node.removeWall();
+    node.init();
   });
 }
 

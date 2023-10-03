@@ -2,6 +2,8 @@
 const V_Orientation = 1;
 const H_Orientation = 2;
 
+var visualizingPathFinding = false
+
 var map = new Map();
 var isMouseDown = false;
 var blockHeight = 25;

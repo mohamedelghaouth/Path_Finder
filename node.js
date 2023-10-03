@@ -25,10 +25,39 @@ class Node {
     this.blockHeight = blockHeight;
     this.blockWidth = blockWidth;
     this.setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth);
+
+    this.dijkstraWeight = Infinity;
+    this.dijkstraParent = null;
   }
 
   switchWallState() {
     this.isWall = !this.isWall;
+  }
+
+  init(){
+    this.isVisited = false;
+    this.isWall = false;
+    this.dijkstraWeight = Infinity;
+    this.dijkstraParent = null;
+
+    let block = document.getElementById(this.id);
+    block.classList.add("empty");
+    block.classList.remove("short-path-node");
+    block.classList.remove("visited");
+    block.classList.remove("visited-non-animation");
+    block.classList.remove("wall");
+  }
+
+  initForPathFinding(){
+    this.isVisited = false;
+    this.dijkstraWeight = Infinity;
+    this.dijkstraParent = null;
+
+    let block = document.getElementById(this.id);
+    block.classList.add("empty");
+    block.classList.remove("short-path-node");
+    block.classList.remove("visited-non-animation");
+    block.classList.remove("visited");
   }
 
   setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth) {
@@ -110,7 +139,7 @@ class Node {
     return this.line - this.blockHeight * 2 >= 0;
   }
   thereIsSpaceInLeftDirection() {
-    return this.column - this.blockWidth * 2 >=0;
+    return this.column - this.blockWidth * 2 >= 0;
   }
   thereIsSpaceInRightDirection(mapWidth) {
     return this.column + this.blockWidth * 2 <= mapWidth;
@@ -124,14 +153,12 @@ class Node {
 
     let neighborInThisDirection = map.get(neighborInThisDirectionId);
 
-
     let neighborNeighborInThisDirectionId =
       neighborInThisDirection.neighbors.get(direction);
 
     let secondNeighborInThisDirection = map.get(
       neighborNeighborInThisDirectionId
     );
-   
 
     return (
       neighborInThisDirection.isWall && secondNeighborInThisDirection.isWall
@@ -169,5 +196,47 @@ class Node {
       Node.rightKey,
       Node.bottomKey,
     ]);
+  }
+
+  setVisited() {
+    this.isVisited = true;
+    let block = document.getElementById(this.id);
+    block.classList.add("visited");
+    block.classList.remove("visited-non-animation");
+    block.classList.remove("empty");
+  }
+
+  setVisitedWithoutAnimation() {
+    this.isVisited = true;
+    let block = document.getElementById(this.id);
+    block.classList.add("visited-non-animation");
+    block.classList.remove("visited");
+    block.classList.remove("empty");
+  }
+
+  setNeighborsDijkstraWeight(dijkstraUnvisitedNodeList) {
+    for(const value of this.neighbors.values()) {
+      let neighborNode = getNode(value);
+      if (!neighborNode.isVisited && !neighborNode.isWall) {
+        let tmpWeigh = this.dijkstraWeight === Infinity ? 1 : this.dijkstraWeight + 1
+        neighborNode.setDijkstraWeightAndParent(tmpWeigh, this);
+        dijkstraUnvisitedNodeList.add(neighborNode);
+      }
+    };
+  }
+
+  setDijkstraWeightAndParent(newWeight, newParent) {
+    if (this.dijkstraWeight > newWeight) {
+      this.dijkstraWeight = newWeight;
+      this.dijkstraParent = newParent;
+    }
+  }
+  setToPartOfTheShortPath(){
+    this.isPartOfTheShortPath = true;
+    let block = document.getElementById(this.id);
+    block.classList.add("short-path-node");
+    block.classList.remove("empty");
+    block.classList.remove("visited");
+    block.classList.remove("visited-non-animation");
   }
 }
