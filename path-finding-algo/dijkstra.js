@@ -1,41 +1,22 @@
-var dijkstraUnvisitedNodeSet = null;
+import { Heap } from "./heap.js";
+
+var dijkstraUnvisitedNodeMinHeap = null;
 
 function setStartNode() {
   let startNode = getStartNode();
-  dijkstraUnvisitedNodeSet.add(startNode);
+  dijkstraUnvisitedNodeMinHeap.add(startNode);
 }
 
 function setStartNodeFromId(id) {
-    let startNode = getNode(id);
-    dijkstraUnvisitedNodeSet.add(startNode);
-  }
+  let dijkstraUnvisitedNodeMinHeap = getNode(id);
+  dijkstraUnvisitedNodeSet.add(startNode);
+}
 
 /***
  * get the closest unvisited node
  */
 function getNextNode() {
-  let closestNode = null;
-  let minWeight = Infinity;
-  for (const tmpNode of dijkstraUnvisitedNodeSet) {
-    if (!tmpNode.isVisited && tmpNode.weight <= minWeight) {
-      closestNode = tmpNode;
-      minWeight = tmpNode.weight;
-    }
-  }
-
-  dijkstraUnvisitedNodeSet.delete(closestNode);
-
-  return closestNode;
-}
-
-function hasNext() {
-  for (const tmpNode of dijkstraUnvisitedNodeSet) {
-    if (!tmpNode.isVisited) {
-      return true;
-    }
-  }
-
-  return false;
+  return dijkstraUnvisitedNodeMinHeap.getRoot();
 }
 
 async function drawShorterPath() {
@@ -70,11 +51,11 @@ function drawShorterPathOnDragOverTarget(newTargetId) {
 }
 
 export async function dijkstra() {
-  dijkstraUnvisitedNodeSet = new Set();
+  dijkstraUnvisitedNodeMinHeap = new Heap("weight");
   setStartNode();
   let tmpNode = null;
 
-  while (hasNext()) {
+  while (dijkstraUnvisitedNodeMinHeap.hasNext()) {
     tmpNode = getNextNode();
     tmpNode.setVisited();
 
@@ -85,12 +66,12 @@ export async function dijkstra() {
       return;
     }
 
-    tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeSet);
+    tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeMinHeap);
   }
 }
 
 export function dijkstraOnDragOverStart(newStartId) {
-  dijkstraUnvisitedNodeSet = new Set();
+  dijkstraUnvisitedNodeMinHeap = new Heap("weight");
   setStartNodeFromId(newStartId);
   let tmpNode = null;
 
@@ -98,31 +79,29 @@ export function dijkstraOnDragOverStart(newStartId) {
     tmpNode = getNextNode();
     tmpNode.setVisitedWithoutAnimation();
 
-
     if (tmpNode.isTarget) {
-        drawShorterPathOnDragOverStart(newStartId);
+      drawShorterPathOnDragOverStart(newStartId);
       return;
     }
 
-    tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeSet);
+    tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeMinHeap);
   }
 }
 
 export function dijkstraOnDragOverTarget(newTargetId) {
-    dijkstraUnvisitedNodeSet = new Set();
-    setStartNode();
-    let tmpNode = null;
-  
-    while (hasNext()) {
-      tmpNode = getNextNode();
-      tmpNode.setVisitedWithoutAnimation();
-  
-  
-      if (tmpNode.id === newTargetId) {
-          drawShorterPathOnDragOverTarget(newTargetId);
-        return;
-      }
-  
-      tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeSet);
+  dijkstraUnvisitedNodeMinHeap = new Heap("weight");
+  setStartNode();
+  let tmpNode = null;
+
+  while (hasNext()) {
+    tmpNode = getNextNode();
+    tmpNode.setVisitedWithoutAnimation();
+
+    if (tmpNode.id === newTargetId) {
+      drawShorterPathOnDragOverTarget(newTargetId);
+      return;
     }
+
+    tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeMinHeap);
   }
+}
