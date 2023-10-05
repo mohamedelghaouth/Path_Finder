@@ -26,7 +26,7 @@
   <body>
     <div id="container">
       <div id="nav" class="row">
-        <ul id="nav-list">
+        <ul class="nav-list">
           <li id="logo">
             <div><h3>Path Finder</h3></div>
           </li>
@@ -69,8 +69,38 @@
           </li>
         </ul>
       </div>
-      <div id="options" class="row"></div>
-      <div id="title" class="row"></div>
+      <div id="options" class="row">
+        <ul class="option-list">
+          <li class="list-item">
+            <div class="block-no-border">
+              <img src="./public/triangletwo-right.svg" />
+            </div>
+            <span class="text">Start Node</span>
+          </li>
+          <li class="list-item">
+            <div class="block-no-border">
+              <img src="./public/circle.svg" />
+            </div>
+            <span class="text"> Target Node</span>
+          </li>
+          <li class="list-item">
+            <div class="block-with-border empty"></div>
+            <span class="text"> Unvisited Node</span>
+          </li>
+          <li class="list-item">
+            <div class="block-with-border visited-non-animation"></div>
+            <span class="text"> Visited Node</span>
+          </li>
+          <li class="list-item">
+            <div class="block-with-border short-path-node"></div>
+            <span class="text"> Shortest-path Node</span>
+          </li>
+          <li class="list-item">
+            <div class="block-with-border wall"></div>
+            <span class="text">Wall Node</span>
+          </li>
+        </ul>
+      </div>
       <div id="map" class="row"></div>
     </div>
     <!-- <script
@@ -80,12 +110,12 @@
       referrerpolicy="no-referrer"
     ></script> -->
 
-    <script src="domHelper.js" ></script>
-    <script src="globalHelper.js" ></script>
-    <script src="nodeHelper.js" ></script>
+    <script src="domHelper.js"></script>
+    <script src="globalHelper.js"></script>
+    <script src="nodeHelper.js"></script>
     <script src="dragDropHelper.js" type="module"></script>
-    <script src="mapEventHelper.js" ></script>
-    <script src="globals.js" ></script>
+    <script src="mapEventHelper.js"></script>
+    <script src="globals.js"></script>
     <script src="node.js"></script>
     <script src="app.js" type="module"></script>
   </body>

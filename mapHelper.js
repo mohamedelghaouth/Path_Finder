@@ -2,8 +2,7 @@ import { addClickEventListener } from "./eventHelper.js";
 
 export function clearMap() {
   const blocks = document.querySelectorAll(".block");
-  visualizingPathFinding = false
-
+  visualizingPathFinding = false;
 
   blocks.forEach((block) => {
     let node = map.get(block.id);

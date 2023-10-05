@@ -17,6 +17,7 @@ class Node {
     this.line = line;
     this.column = column;
     this.id = line + "-" + column;
+    this.block = document.getElementById(this.id);
     this.isVisited = false;
     this.isWall = false;
     this.isTarget = isTarget;
@@ -26,21 +27,33 @@ class Node {
     this.blockWidth = blockWidth;
     this.setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth);
 
-    this.dijkstraWeight = Infinity;
-    this.dijkstraParent = null;
+    this.weight = Infinity;
+    this.parent = null;
+
+    this.distanceFromTarget = Infinity;
+    this.aSearchCost = Infinity;
   }
 
   switchWallState() {
     this.isWall = !this.isWall;
   }
+  getBlock() {
+    if (this.block === null) {
+      this.block = document.getElementById(this.id);
+    }
+    return this.block;
+  }
 
-  init(){
+  init() {
     this.isVisited = false;
     this.isWall = false;
-    this.dijkstraWeight = Infinity;
-    this.dijkstraParent = null;
+    this.weight = Infinity;
+    this.parent = null;
 
-    let block = document.getElementById(this.id);
+    this.distanceFromTarget = Infinity;
+    this.aSearchCost = Infinity;
+
+    let block = this.getBlock();
     block.classList.add("empty");
     block.classList.remove("short-path-node");
     block.classList.remove("visited");
@@ -48,12 +61,16 @@ class Node {
     block.classList.remove("wall");
   }
 
-  initForPathFinding(){
+  initForPathFinding() {
     this.isVisited = false;
-    this.dijkstraWeight = Infinity;
-    this.dijkstraParent = null;
+    this.isPartOfTheShortPath = false;
+    this.weight = Infinity;
+    this.parent = null;
 
-    let block = document.getElementById(this.id);
+    this.distanceFromTarget = Infinity;
+    this.aSearchCost = Infinity;
+
+    let block = this.getBlock();
     block.classList.add("empty");
     block.classList.remove("short-path-node");
     block.classList.remove("visited-non-animation");
@@ -112,25 +129,25 @@ class Node {
   }
 
   makeCurrentInMazeGeneration() {
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.add("current");
   }
 
   removeCurrentInMazeGeneration() {
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.remove("current");
   }
 
   removeWall() {
     this.isWall = false;
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.remove("wall");
     block.classList.add("empty");
   }
 
   setWall() {
     this.isWall = true;
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.add("wall");
     block.classList.remove("empty");
   }
@@ -200,7 +217,7 @@ class Node {
 
   setVisited() {
     this.isVisited = true;
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.add("visited");
     block.classList.remove("visited-non-animation");
     block.classList.remove("empty");
@@ -208,35 +225,77 @@ class Node {
 
   setVisitedWithoutAnimation() {
     this.isVisited = true;
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.add("visited-non-animation");
     block.classList.remove("visited");
     block.classList.remove("empty");
   }
 
   setNeighborsDijkstraWeight(dijkstraUnvisitedNodeList) {
-    for(const value of this.neighbors.values()) {
+    for (const value of this.neighbors.values()) {
       let neighborNode = getNode(value);
       if (!neighborNode.isVisited && !neighborNode.isWall) {
-        let tmpWeigh = this.dijkstraWeight === Infinity ? 1 : this.dijkstraWeight + 1
+        let tmpWeigh = this.weight === Infinity ? 1 : this.weight + 1;
         neighborNode.setDijkstraWeightAndParent(tmpWeigh, this);
         dijkstraUnvisitedNodeList.add(neighborNode);
       }
-    };
+    }
   }
 
   setDijkstraWeightAndParent(newWeight, newParent) {
-    if (this.dijkstraWeight > newWeight) {
-      this.dijkstraWeight = newWeight;
-      this.dijkstraParent = newParent;
+    if (this.weight > newWeight) {
+      this.weight = newWeight;
+      this.parent = newParent;
     }
   }
-  setToPartOfTheShortPath(){
+
+  setToPartOfTheShortPath() {
     this.isPartOfTheShortPath = true;
-    let block = document.getElementById(this.id);
+    let block = this.getBlock();
     block.classList.add("short-path-node");
     block.classList.remove("empty");
     block.classList.remove("visited");
     block.classList.remove("visited-non-animation");
+  }
+
+  setNeighborsASearchCost(aSearchUnvisitedNodeSet, target) {
+    for (const value of this.neighbors.values()) {
+      let neighborNode = getNode(value);
+      if (!neighborNode.isVisited && !neighborNode.isWall) {
+        neighborNode.setDistanceFromTargetIfInfinite(target);
+
+        let tmpWeigh = this.weight === Infinity ? 1 : this.weight + 1;
+        neighborNode.setASearchCostAndWeightAndParent(tmpWeigh, this);
+        aSearchUnvisitedNodeSet.add(neighborNode);
+      }
+    }
+  }
+
+  setASearchCostAndWeightAndParent(newWeight, newParent) {
+    if (this.weight > newWeight) {
+      this.weight = newWeight;
+      this.parent = newParent;
+      this.aSearchCost = newWeight + this.distanceFromTarget;
+    }
+  }
+
+  setDistanceFromTargetIfInfinite(target) {
+    if (this.distanceFromTarget === Infinity) {
+      this.setDistanceFromTarget(target);
+    }
+  }
+
+  setDistanceFromTarget(target) {
+    let xDistance = target.line - this.line;
+    let yDistance = target.column - this.column;
+
+    //this.distanceFromTarget = Math.sqrt(Math.pow(xDistance,2) + Math.pow(yDistance,2))
+    this.distanceFromTarget = this.abs(xDistance) + this.abs(yDistance);
+  }
+  abs(number) {
+    if (number < 0) {
+      return -number;
+    }
+    return number;
   }
 }

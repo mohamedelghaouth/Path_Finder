@@ -5,7 +5,6 @@ import {
 
 var dragged = null;
 var dropHandled = false;
-var pathFindingVisualizedOnDragOver = false;
 
 export function allowDrop(ev) {
   ev.preventDefault();
@@ -32,7 +31,6 @@ export function dragover_handler(ev) {
   }
   if (visualizingPathFinding) {
     visualizePathFindingOnDragOver(dragged, elementId);
-    pathFindingVisualizedOnDragOver = true;
   }
 }
 
@@ -56,6 +54,10 @@ export function drop(ev) {
     elementId === "target" ||
     map.get(elementId).isWall
   ) {
+    if (visualizingPathFinding) {
+      visualizePathFindingOnDragEnd(dragged);
+    }e
+    visualizePathFindingOnDragEnd(dragged);
     return;
   } else {
     var data = ev.dataTransfer.getData("text");

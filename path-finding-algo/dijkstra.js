@@ -17,9 +17,9 @@ function getNextNode() {
   let closestNode = null;
   let minWeight = Infinity;
   for (const tmpNode of dijkstraUnvisitedNodeSet) {
-    if (!tmpNode.isVisited && tmpNode.dijkstraWeight <= minWeight) {
+    if (!tmpNode.isVisited && tmpNode.weight <= minWeight) {
       closestNode = tmpNode;
-      minWeight = tmpNode.dijkstraWeight;
+      minWeight = tmpNode.weight;
     }
   }
 
@@ -44,7 +44,7 @@ async function drawShorterPath() {
   while (!currNode.isStart) {
     currNode.setToPartOfTheShortPath();
     await sleep(10);
-    currNode = currNode.dijkstraParent;
+    currNode = currNode.parent;
   }
   currNode.setToPartOfTheShortPath();
 }
@@ -54,7 +54,7 @@ function drawShorterPathOnDragOverStart(newStartId) {
 
   while (currNode.id !== newStartId) {
     currNode.setToPartOfTheShortPath();
-    currNode = currNode.dijkstraParent;
+    currNode = currNode.parent;
   }
   currNode.setToPartOfTheShortPath();
 }
@@ -64,7 +64,7 @@ function drawShorterPathOnDragOverTarget(newTargetId) {
 
   while (!currNode.isStart) {
     currNode.setToPartOfTheShortPath();
-    currNode = currNode.dijkstraParent;
+    currNode = currNode.parent;
   }
   currNode.setToPartOfTheShortPath();
 }
