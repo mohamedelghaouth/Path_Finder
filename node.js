@@ -231,13 +231,13 @@ class Node {
     block.classList.remove("empty");
   }
 
-  setNeighborsDijkstraWeight(dijkstraUnvisitedNodeList) {
+  setNeighborsDijkstraWeight(dijkstraUnvisitedNode) {
     for (const value of this.neighbors.values()) {
       let neighborNode = getNode(value);
       if (!neighborNode.isVisited && !neighborNode.isWall) {
         let tmpWeigh = this.weight === Infinity ? 1 : this.weight + 1;
         neighborNode.setDijkstraWeightAndParent(tmpWeigh, this);
-        dijkstraUnvisitedNodeList.add(neighborNode);
+        dijkstraUnvisitedNode.add(neighborNode);
       }
     }
   }
