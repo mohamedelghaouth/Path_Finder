@@ -19,11 +19,11 @@ var domElement = initializeDomElement();
 function getMapHeight() {
   let navHeight = document.getElementById("nav").offsetHeight;
   let optionsHeight = document.getElementById("options").offsetHeight;
-  //let titleHeight = document.getElementById("title").offsetHeight;
+  let messageHeight = document.getElementById("message").offsetHeight;
   let contHeight = document.getElementById("container").offsetHeight;
 
-  let height = contHeight - navHeight - optionsHeight ;
-  let numberOfLine = Math.trunc(height / blockHeight) - 4;
+  let height = contHeight - navHeight - optionsHeight - messageHeight ;
+  let numberOfLine = Math.trunc(height / blockHeight) - 6;
 
   return blockHeight * numberOfLine;
 }

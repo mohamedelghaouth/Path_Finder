@@ -33,7 +33,7 @@
 
 
 #options {
-  height: 50px;
+  height: 30px;
 }
 
 #title {
@@ -169,7 +169,10 @@ li {
   font-size: 7px;
 }
 
-.message {
-  text-align: center;
+#message {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  text-align: left;
   font-size: larger;
 }

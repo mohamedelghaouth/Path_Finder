@@ -1,16 +1,13 @@
+import {
+  drawShorterPath,
+  drawShorterPathOnDragOverStart,
+  drawShorterPathOnDragOverTarget,
+  setStartNode,
+  setStartNodeFromId,
+  hasNext,
+} from "./utils.js";
+
 var bestFirstSearchUnvisitedNodeSet = null;
-
-function setStartNode() {
-  let startNode = getStartNode();
-  bestFirstSearchUnvisitedNodeSet.add(startNode);
-  return startNode;
-}
-
-function setStartNodeFromId(id) {
-  let startNode = getNode(id);
-  bestFirstSearchUnvisitedNodeSet.add(startNode);
-  return startNode;
-}
 
 function getNextNode() {
   let closestNode = null;
@@ -27,33 +24,12 @@ function getNextNode() {
   return closestNode;
 }
 
-function hasNext() {
-  for (const tmpNode of bestFirstSearchUnvisitedNodeSet) {
-    if (!tmpNode.isVisited) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-async function drawShorterPath() {
-  let currNode = getTargetNode();
-
-  while (!currNode.isStart) {
-    currNode.setToPartOfTheShortPath();
-    await sleep(10);
-    currNode = currNode.parent;
-  }
-  currNode.setToPartOfTheShortPath();
-}
-
 export async function bestFirstSearch() {
   bestFirstSearchUnvisitedNodeSet = new Set();
-  setStartNode();
+  setStartNode(bestFirstSearchUnvisitedNodeSet);
   let tmpNode = null;
 
-  while (hasNext()) {
+  while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
 
     tmpNode.setVisited();
@@ -68,6 +44,52 @@ export async function bestFirstSearch() {
     tmpNode.setNeighborsBestFirstSearch(
       bestFirstSearchUnvisitedNodeSet,
       getTargetNode()
+    );
+  }
+}
+
+export function bestFirstSearchOnDragOverStart(newStartId) {
+  bestFirstSearchUnvisitedNodeSet = new Set();
+  setStartNodeFromId(bestFirstSearchUnvisitedNodeSet, newStartId);
+  let tmpNode = null;
+  let target = getTargetNode();
+
+  while (hasNext()) {
+    tmpNode = getNextNode();
+
+    tmpNode.setVisitedWithoutAnimation();
+
+    if (tmpNode.isTarget) {
+      drawShorterPathOnDragOverStart(newStartId);
+      return;
+    }
+
+    tmpNode.setNeighborsBestFirstSearch(
+      bestFirstSearchUnvisitedNodeSet,
+      target
+    );
+  }
+}
+
+export function bestFirstSearchOnDragOverTarget(newTargetId) {
+  bestFirstSearchUnvisitedNodeSet = new Set();
+  setStartNode(bestFirstSearchUnvisitedNodeSet);
+  let tmpNode = null;
+  let target = getNode(newTargetId);
+
+  while (hasNext()) {
+    tmpNode = getNextNode();
+
+    tmpNode.setVisitedWithoutAnimation();
+
+    if (tmpNode.id === newTargetId) {
+      drawShorterPathOnDragOverTarget(newTargetId);
+      return;
+    }
+
+    tmpNode.setNeighborsBestFirstSearch(
+      bestFirstSearchUnvisitedNodeSet,
+      target
     );
   }
 }

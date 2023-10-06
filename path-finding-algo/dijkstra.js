@@ -1,14 +1,13 @@
+import {
+  drawShorterPath,
+  drawShorterPathOnDragOverStart,
+  drawShorterPathOnDragOverTarget,
+  setStartNode,
+  setStartNodeFromId,
+  hasNext,
+} from "./utils.js";
+
 var dijkstraUnvisitedNodeSet = null;
-
-function setStartNode() {
-  let startNode = getStartNode();
-  dijkstraUnvisitedNodeSet.add(startNode);
-}
-
-function setStartNodeFromId(id) {
-    let startNode = getNode(id);
-    dijkstraUnvisitedNodeSet.add(startNode);
-  }
 
 /***
  * get the closest unvisited node
@@ -28,53 +27,14 @@ function getNextNode() {
   return closestNode;
 }
 
-function hasNext() {
-  for (const tmpNode of dijkstraUnvisitedNodeSet) {
-    if (!tmpNode.isVisited) {
-      return true;
-    }
-  }
 
-  return false;
-}
-
-async function drawShorterPath() {
-  let currNode = getTargetNode();
-
-  while (!currNode.isStart) {
-    currNode.setToPartOfTheShortPath();
-    await sleep(10);
-    currNode = currNode.parent;
-  }
-  currNode.setToPartOfTheShortPath();
-}
-
-function drawShorterPathOnDragOverStart(newStartId) {
-  let currNode = getTargetNode();
-
-  while (currNode.id !== newStartId) {
-    currNode.setToPartOfTheShortPath();
-    currNode = currNode.parent;
-  }
-  currNode.setToPartOfTheShortPath();
-}
-
-function drawShorterPathOnDragOverTarget(newTargetId) {
-  let currNode = getNode(newTargetId);
-
-  while (!currNode.isStart) {
-    currNode.setToPartOfTheShortPath();
-    currNode = currNode.parent;
-  }
-  currNode.setToPartOfTheShortPath();
-}
 
 export async function dijkstra() {
   dijkstraUnvisitedNodeSet = new Set();
-  setStartNode();
+  setStartNode(dijkstraUnvisitedNodeSet);
   let tmpNode = null;
 
-  while (hasNext()) {
+  while (hasNext(dijkstraUnvisitedNodeSet)) {
     tmpNode = getNextNode();
     tmpNode.setVisited();
 
@@ -91,10 +51,10 @@ export async function dijkstra() {
 
 export function dijkstraOnDragOverStart(newStartId) {
   dijkstraUnvisitedNodeSet = new Set();
-  setStartNodeFromId(newStartId);
+  setStartNodeFromId(dijkstraUnvisitedNodeSet, newStartId);
   let tmpNode = null;
 
-  while (hasNext()) {
+  while (hasNext(dijkstraUnvisitedNodeSet)) {
     tmpNode = getNextNode();
     tmpNode.setVisitedWithoutAnimation();
 

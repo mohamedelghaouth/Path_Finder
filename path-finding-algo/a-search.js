@@ -1,16 +1,13 @@
+import {
+  drawShorterPath,
+  drawShorterPathOnDragOverStart,
+  drawShorterPathOnDragOverTarget,
+  setStartNode,
+  setStartNodeFromId,
+  hasNext,
+} from "./utils.js";
+
 var aSearchUnvisitedNodeSet = null;
-
-function setStartNode() {
-  let startNode = getStartNode();
-  aSearchUnvisitedNodeSet.add(startNode);
-  return startNode;
-}
-
-function setStartNodeFromId(id) {
-  let startNode = getNode(id);
-  aSearchUnvisitedNodeSet.add(startNode);
-  return startNode;
-}
 
 function getNextNode() {
   let closestNode = null;
@@ -36,33 +33,14 @@ function getNextNode() {
   return closestNode;
 }
 
-function hasNext() {
-  for (const tmpNode of aSearchUnvisitedNodeSet) {
-    if (!tmpNode.isVisited) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-async function drawShorterPath() {
-  let currNode = getTargetNode();
-
-  while (!currNode.isStart) {
-    currNode.setToPartOfTheShortPath();
-    await sleep(10);
-    currNode = currNode.parent;
-  }
-  currNode.setToPartOfTheShortPath();
-}
 
 export async function aSearch() {
   aSearchUnvisitedNodeSet = new Set();
-  let startNode = setStartNode();
+  let startNode = setStartNode(aSearchUnvisitedNodeSet);
   let tmpNode = null;
+  let target = getTargetNode()
 
-  while (hasNext()) {
+  while (hasNext(aSearchUnvisitedNodeSet)) {
     if (tmpNode == null) {
       tmpNode = startNode;
       aSearchUnvisitedNodeSet.delete(startNode);
@@ -79,30 +57,17 @@ export async function aSearch() {
       return;
     }
 
-    tmpNode.setNeighborsASearchCost(aSearchUnvisitedNodeSet, getTargetNode());
+    tmpNode.setNeighborsASearchCost(aSearchUnvisitedNodeSet, target);
   }
-}
-
-function drawShorterPathOnDragOverStart(newStartId) {
-  let currNode = getTargetNode();
-  let count = 1;
-
-  while (currNode && currNode.id !== newStartId) {
-    currNode.setToPartOfTheShortPath();
-    currNode = currNode.parent;
-    count++;
-  }
-
-  currNode && currNode.setToPartOfTheShortPath();
 }
 
 export function aSearchOnDragOverStart(newStartId) {
   aSearchUnvisitedNodeSet = new Set();
-  let startNode = setStartNodeFromId(newStartId);
+  let startNode = setStartNodeFromId(aSearchUnvisitedNodeSet, newStartId);
   let tmpNode = null;
   let target = getTargetNode();
 
-  while (hasNext()) {
+  while (hasNext(aSearchUnvisitedNodeSet)) {
     if (tmpNode == null) {
       tmpNode = startNode;
       aSearchUnvisitedNodeSet.delete(startNode);
@@ -121,23 +86,14 @@ export function aSearchOnDragOverStart(newStartId) {
   }
 }
 
-function drawShorterPathOnDragOverTarget(newTargetId) {
-  let currNode = getNode(newTargetId);
-
-  while (!currNode.isStart) {
-    currNode.setToPartOfTheShortPath();
-    currNode = currNode.parent;
-  }
-  currNode.setToPartOfTheShortPath();
-}
 
 export function aSearchOnDragOverTarget(newTargetId) {
   aSearchUnvisitedNodeSet = new Set();
-  let startNode = setStartNode();
+  let startNode = setStartNode(aSearchUnvisitedNodeSet);
   let tmpNode = null;
   let target = getNode(newTargetId);
 
-  while (hasNext()) {
+  while (hasNext(aSearchUnvisitedNodeSet)) {
     if (tmpNode == null) {
       tmpNode = startNode;
       aSearchUnvisitedNodeSet.delete(startNode);
