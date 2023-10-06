@@ -49,12 +49,13 @@ export async function bestFirstSearch() {
 }
 
 export function bestFirstSearchOnDragOverStart(newStartId) {
+
   bestFirstSearchUnvisitedNodeSet = new Set();
   setStartNodeFromId(bestFirstSearchUnvisitedNodeSet, newStartId);
   let tmpNode = null;
   let target = getTargetNode();
 
-  while (hasNext()) {
+  while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
 
     tmpNode.setVisitedWithoutAnimation();
@@ -72,12 +73,13 @@ export function bestFirstSearchOnDragOverStart(newStartId) {
 }
 
 export function bestFirstSearchOnDragOverTarget(newTargetId) {
+
   bestFirstSearchUnvisitedNodeSet = new Set();
   setStartNode(bestFirstSearchUnvisitedNodeSet);
   let tmpNode = null;
   let target = getNode(newTargetId);
 
-  while (hasNext()) {
+  while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
 
     tmpNode.setVisitedWithoutAnimation();
@@ -86,6 +88,7 @@ export function bestFirstSearchOnDragOverTarget(newTargetId) {
       drawShorterPathOnDragOverTarget(newTargetId);
       return;
     }
+
 
     tmpNode.setNeighborsBestFirstSearch(
       bestFirstSearchUnvisitedNodeSet,

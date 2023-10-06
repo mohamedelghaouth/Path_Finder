@@ -8,9 +8,10 @@ import {
   aSearchOnDragOverStart,
   aSearchOnDragOverTarget,
 } from "./a-search.js";
-import { bestFirstSearch } from "./best-first-search.js";
+import { bestFirstSearch, bestFirstSearchOnDragOverStart, bestFirstSearchOnDragOverTarget } from "./best-first-search.js";
 
 export async function visualizePathFinding() {
+  visualizingPathFinding = true
   clearNodes();
   disableAll();
   let selectValue = document.getElementById("algo").value;
@@ -60,6 +61,13 @@ export function visualizePathFindingOnDragOver(dragged, elementId) {
       aSearchOnDragOverTarget(elementId);
     }
   }
+  if (selectValue === "best-first-search") {
+    if (dragged === "start") {
+      bestFirstSearchOnDragOverStart(elementId);
+    } else {
+      bestFirstSearchOnDragOverTarget(elementId);
+    }
+  }
 }
 
 export function visualizePathFindingOnDragEnd(dragged) {
@@ -78,6 +86,13 @@ export function visualizePathFindingOnDragEnd(dragged) {
       aSearchOnDragOverStart(`${startLine}-${startColumn}`);
     } else {
       aSearchOnDragOverTarget(`${targetLine}-${targetColumn}`);
+    }
+  }
+  if (selectValue === "best-first-search") {
+    if (dragged === "start") {
+      bestFirstSearchOnDragOverStart(`${startLine}-${startColumn}`);
+    } else {
+      bestFirstSearchOnDragOverTarget(`${targetLine}-${targetColumn}`);
     }
   }
 }

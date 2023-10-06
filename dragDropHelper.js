@@ -56,7 +56,7 @@ export function drop(ev) {
   ) {
     if (visualizingPathFinding) {
       visualizePathFindingOnDragEnd(dragged);
-    }e
+    }
     visualizePathFindingOnDragEnd(dragged);
     return;
   } else {
