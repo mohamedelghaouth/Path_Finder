@@ -13,13 +13,21 @@ function setStartNodeFromId(id) {
 }
 
 function getNextNode() {
-
   let closestNode = null;
   let minCost = Infinity;
   for (const tmpNode of aSearchUnvisitedNodeSet) {
-    if (!tmpNode.isVisited && tmpNode.aSearchCost <= minCost) {
-      closestNode = tmpNode;
-      minCost = tmpNode.aSearchCost;
+    if (tmpNode.aSearchCost <= minCost) {
+      if (tmpNode.aSearchCost === minCost) {
+        closestNode =
+          tmpNode.weight < closestNode.weight ? tmpNode : closestNode;
+        minCost =
+          tmpNode.weight < closestNode.weight
+            ? tmpNode.aSearchCost
+            : closestNode.aSearchCost;
+      } else {
+        closestNode = tmpNode;
+        minCost = tmpNode.aSearchCost;
+      }
     }
   }
 
@@ -93,7 +101,6 @@ export function aSearchOnDragOverStart(newStartId) {
   let startNode = setStartNodeFromId(newStartId);
   let tmpNode = null;
   let target = getTargetNode();
-
 
   while (hasNext()) {
     if (tmpNode == null) {

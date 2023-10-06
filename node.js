@@ -3,6 +3,7 @@ class Node {
   static leftKey = 2;
   static rightKey = 3;
   static bottomKey = 4;
+  static WEIGHT = 20;
 
   constructor(
     line,
@@ -23,6 +24,7 @@ class Node {
     this.isTarget = isTarget;
     this.isStart = isStart;
     this.isPartOfTheShortPath = false;
+    this.treated = false;
     this.blockHeight = blockHeight;
     this.blockWidth = blockWidth;
     this.setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth);
@@ -50,6 +52,9 @@ class Node {
     this.weight = Infinity;
     this.parent = null;
 
+    this.treated = false;
+    this.isPartOfTheShortPath = false;
+
     this.distanceFromTarget = Infinity;
     this.aSearchCost = Infinity;
 
@@ -59,11 +64,16 @@ class Node {
     block.classList.remove("visited");
     block.classList.remove("visited-non-animation");
     block.classList.remove("wall");
+    block.classList.remove("treated");
+    if (!this.isStart && !this.isTarget) {
+      block.innerHTML = "";
+    }
   }
 
   initForPathFinding() {
     this.isVisited = false;
     this.isPartOfTheShortPath = false;
+    this.treated = false;
     this.weight = Infinity;
     this.parent = null;
 
@@ -75,6 +85,10 @@ class Node {
     block.classList.remove("short-path-node");
     block.classList.remove("visited-non-animation");
     block.classList.remove("visited");
+    block.classList.remove("treated");
+    if (!this.isStart && !this.isTarget) {
+      block.innerHTML = "";
+    }
   }
 
   setNeighbors(blockHeight, blockWidth, mapHeight, mapWidth) {
@@ -221,6 +235,7 @@ class Node {
     block.classList.add("visited");
     block.classList.remove("visited-non-animation");
     block.classList.remove("empty");
+    block.classList.remove("treated");
   }
 
   setVisitedWithoutAnimation() {
@@ -229,13 +244,15 @@ class Node {
     block.classList.add("visited-non-animation");
     block.classList.remove("visited");
     block.classList.remove("empty");
+    block.classList.remove("treated");
   }
 
   setNeighborsDijkstraWeight(dijkstraUnvisitedNode) {
     for (const value of this.neighbors.values()) {
       let neighborNode = getNode(value);
       if (!neighborNode.isVisited && !neighborNode.isWall) {
-        let tmpWeigh = this.weight === Infinity ? 1 : this.weight + 1;
+        let tmpWeigh =
+          this.weight === Infinity ? Node.WEIGHT : this.weight + Node.WEIGHT;
         neighborNode.setDijkstraWeightAndParent(tmpWeigh, this);
         dijkstraUnvisitedNode.add(neighborNode);
       }
@@ -256,6 +273,27 @@ class Node {
     block.classList.remove("empty");
     block.classList.remove("visited");
     block.classList.remove("visited-non-animation");
+    block.classList.remove("treated");
+  }
+
+  setToTreated() {
+    this.treated = true;
+    let block = this.getBlock();
+    block.classList.add("treated");
+    block.classList.remove("empty");
+  }
+
+  printScore() {
+    this.treated = true;
+    let block = this.getBlock();
+    if (!this.isStart && !this.isTarget) {
+      let tmp = `
+        <span>${this.weight}  ${this.distanceFromTarget}</span><br>
+        <span>${this.aSearchCost}</span>
+      `;
+      block.innerHTML = tmp;
+    }
+    block.classList.add("small-text");
   }
 
   setNeighborsASearchCost(aSearchUnvisitedNodeSet, target) {
@@ -264,7 +302,8 @@ class Node {
       if (!neighborNode.isVisited && !neighborNode.isWall) {
         neighborNode.setDistanceFromTargetIfInfinite(target);
 
-        let tmpWeigh = this.weight === Infinity ? 1 : this.weight + 1;
+        let tmpWeigh =
+          this.weight === Infinity ? Node.WEIGHT : this.weight + Node.WEIGHT;
         neighborNode.setASearchCostAndWeightAndParent(tmpWeigh, this);
         aSearchUnvisitedNodeSet.add(neighborNode);
       }
@@ -279,6 +318,22 @@ class Node {
     }
   }
 
+  setNeighborsBestFirstSearch(bestFirstSearchUnvisitedNode, target) {
+    for (const value of this.neighbors.values()) {
+      let neighborNode = getNode(value);
+      if (!neighborNode.isVisited && !neighborNode.isWall) {
+        neighborNode.setDistanceFromTargetIfInfinite(target);
+        neighborNode.setParent(this);
+        bestFirstSearchUnvisitedNode.add(neighborNode);
+      }
+    }
+  }
+
+  setParent(newParent) {
+    this.parent = newParent
+  }
+
+
   setDistanceFromTargetIfInfinite(target) {
     if (this.distanceFromTarget === Infinity) {
       this.setDistanceFromTarget(target);
@@ -288,9 +343,10 @@ class Node {
   setDistanceFromTarget(target) {
     let xDistance = target.line - this.line;
     let yDistance = target.column - this.column;
+    let distance = this.abs(xDistance) + this.abs(yDistance);
 
     //this.distanceFromTarget = Math.sqrt(Math.pow(xDistance,2) + Math.pow(yDistance,2))
-    this.distanceFromTarget = this.abs(xDistance) + this.abs(yDistance);
+    this.distanceFromTarget = distance;
   }
   abs(number) {
     if (number < 0) {
