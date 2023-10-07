@@ -9,6 +9,7 @@ import {
   aSearchOnDragOverTarget,
 } from "./a-search.js";
 import { bestFirstSearch, bestFirstSearchOnDragOverStart, bestFirstSearchOnDragOverTarget } from "./best-first-search.js";
+import { breadthFirstSearch, breadthFirstSearchOnDragOverStart, breadthFirstSearchOnDragOverTarget } from "./breadth-first-search.js";
 
 export async function visualizePathFinding() {
   visualizingPathFinding = true
@@ -29,6 +30,11 @@ export async function visualizePathFinding() {
     setMessage(`<span><b>Best first search</b> does not give the most optimal path</span>`)
 
     await bestFirstSearch();
+  }
+  if (selectValue === "breadth-first-search") {
+    setMessage(`<span><b>Breadth first search</b> does not give the most optimal path</span>`)
+
+    await breadthFirstSearch();
   }
   enableAll();
 }
@@ -68,6 +74,13 @@ export function visualizePathFindingOnDragOver(dragged, elementId) {
       bestFirstSearchOnDragOverTarget(elementId);
     }
   }
+  if (selectValue === "breadth-first-search") {
+    if (dragged === "start") {
+      breadthFirstSearchOnDragOverStart(elementId);
+    } else {
+      breadthFirstSearchOnDragOverTarget(elementId);
+    }
+  }
 }
 
 export function visualizePathFindingOnDragEnd(dragged) {
@@ -93,6 +106,13 @@ export function visualizePathFindingOnDragEnd(dragged) {
       bestFirstSearchOnDragOverStart(`${startLine}-${startColumn}`);
     } else {
       bestFirstSearchOnDragOverTarget(`${targetLine}-${targetColumn}`);
+    }
+  }
+  if (selectValue === "breadth-first-search") {
+    if (dragged === "start") {
+      breadthFirstSearchOnDragOverStart(`${startLine}-${startColumn}`);
+    } else {
+      breadthFirstSearchOnDragOverTarget(`${targetLine}-${targetColumn}`);
     }
   }
 }

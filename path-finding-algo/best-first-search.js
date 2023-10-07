@@ -28,6 +28,7 @@ export async function bestFirstSearch() {
   bestFirstSearchUnvisitedNodeSet = new Set();
   setStartNode(bestFirstSearchUnvisitedNodeSet);
   let tmpNode = null;
+  let target = getTargetNode()
 
   while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
@@ -43,7 +44,7 @@ export async function bestFirstSearch() {
 
     tmpNode.setNeighborsBestFirstSearch(
       bestFirstSearchUnvisitedNodeSet,
-      getTargetNode()
+      target
     );
   }
 }

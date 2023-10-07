@@ -328,6 +328,17 @@ class Node {
       }
     }
   }
+  setNeighborsBreadthFirstSearch(breadthFirstSearchUnvisitedNode) {
+
+    for (const value of this.neighbors.values()) {
+      let neighborNode = getNode(value);
+      if (!neighborNode.isVisited && !neighborNode.isWall) {
+        neighborNode.setParent(this);
+        breadthFirstSearchUnvisitedNode.pushToTheBack(neighborNode);
+      }
+    }
+    
+  }
 
   setParent(newParent) {
     this.parent = newParent
@@ -353,5 +364,13 @@ class Node {
       return -number;
     }
     return number;
+  }
+  setToCurrent() {
+    let block = this.getBlock();
+    block.classList.add("current");
+  }
+  removeCurrent() {
+    let block = this.getBlock();
+    block.classList.remove("current");
   }
 }
