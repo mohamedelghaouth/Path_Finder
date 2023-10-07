@@ -55,3 +55,21 @@ export function clearFromWalls() {
     node.removeWall();
   });
 }
+export function clearWalls() {
+  const blocks = document.querySelectorAll(".block");
+
+  blocks.forEach((block) => {
+    let node = getNode(block.id);
+    node && node.removeWall();
+  });
+}
+
+
+export function clearPath() {
+  const blocks = document.querySelectorAll(".visited, .visited-non-animation, .treated, .short-path-node, .empty");
+
+  blocks.forEach((block) => {
+    let node = getNode(block.id);
+    node && !node.isWall && node.init();
+  });
+}
