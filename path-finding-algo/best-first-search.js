@@ -5,6 +5,7 @@ import {
   setStartNode,
   setStartNodeFromId,
   hasNext,
+  countVisited
 } from "./utils.js";
 
 var bestFirstSearchUnvisitedNodeSet = null;
@@ -29,11 +30,13 @@ export async function bestFirstSearch() {
   setStartNode(bestFirstSearchUnvisitedNodeSet);
   let tmpNode = null;
   let target = getTargetNode()
+  let visitedNodes = 0;
 
   while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
 
     tmpNode.setVisited();
+    countVisited(visitedNodes++);
 
     await sleep(10);
 
@@ -55,11 +58,13 @@ export function bestFirstSearchOnDragOverStart(newStartId) {
   setStartNodeFromId(bestFirstSearchUnvisitedNodeSet, newStartId);
   let tmpNode = null;
   let target = getTargetNode();
+  let visitedNodes = 0;
 
   while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
 
     tmpNode.setVisitedWithoutAnimation();
+    countVisited(visitedNodes++);
 
     if (tmpNode.isTarget) {
       drawShorterPathOnDragOverStart(newStartId);
@@ -79,11 +84,13 @@ export function bestFirstSearchOnDragOverTarget(newTargetId) {
   setStartNode(bestFirstSearchUnvisitedNodeSet);
   let tmpNode = null;
   let target = getNode(newTargetId);
+  let visitedNodes = 0;
 
   while (hasNext(bestFirstSearchUnvisitedNodeSet)) {
     tmpNode = getNextNode();
 
     tmpNode.setVisitedWithoutAnimation();
+    countVisited(visitedNodes++);
 
     if (tmpNode.id === newTargetId) {
       drawShorterPathOnDragOverTarget(newTargetId);

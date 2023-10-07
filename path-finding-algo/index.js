@@ -15,25 +15,19 @@ export async function visualizePathFinding() {
   visualizingPathFinding = true
   clearNodes();
   disableAll();
+  resetMessage()
   let selectValue = document.getElementById("algo").value;
 
   if (selectValue === "dijkstra") {
-    setMessage(`<span><b>Dijkstra</b> give the most optimal and shortest path</span>`)
     await dijkstra();
   }
   if (selectValue === "a-search") {
-    setMessage(`<span><b>A* algorithm</b> give the most optimal and shortest path</span>`)
-
     await aSearch();
   }
   if (selectValue === "best-first-search") {
-    setMessage(`<span><b>Best first search</b> does not give the most optimal path</span>`)
-
     await bestFirstSearch();
   }
   if (selectValue === "breadth-first-search") {
-    setMessage(`<span><b>Breadth first search</b> does not give the most optimal path</span>`)
-
     await breadthFirstSearch();
   }
   enableAll();
@@ -117,6 +111,7 @@ export function visualizePathFindingOnDragEnd(dragged) {
   }
 }
 
-function setMessage(message) {
-  document.getElementById("message").innerHTML = message;
+function resetMessage(message) {
+  document.getElementById("short-path-node-number").innerHTML = "?"
+  document.getElementById("visited-node-number").innerHTML = "?";
 }

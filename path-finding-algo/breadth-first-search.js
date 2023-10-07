@@ -2,6 +2,7 @@ import {
   drawShorterPath,
   drawShorterPathOnDragOverStart,
   drawShorterPathOnDragOverTarget,
+  countVisited
 } from "./utils.js";
 
 import { LinkedList } from "./linkedList.js";
@@ -21,12 +22,13 @@ export async function breadthFirstSearch() {
   breadthFirstSearchUnvisitedNodes.pushToTheBack(getStartNode());
 
   let tmpNode = null;
+  let visitedNodes = 0
 
   while (hasNext()) {
     tmpNode = getNextNode();
 
     tmpNode.setVisited();
-
+    countVisited(visitedNodes++)
     await sleep(10);
 
     if (tmpNode.isTarget) {
@@ -43,12 +45,13 @@ export function breadthFirstSearchOnDragOverStart(newStartId) {
   breadthFirstSearchUnvisitedNodes.pushToTheBack(getNode(id));
 
   let tmpNode = null;
+  let visitedNodes = 0
 
   while (hasNext()) {
     tmpNode = getNextNode();
 
     tmpNode.setVisitedWithoutAnimation();
-
+    countVisited(visitedNodes++)
     if (tmpNode.isTarget) {
       drawShorterPathOnDragOverStart(newStartId);
       return;
@@ -63,12 +66,13 @@ export function breadthFirstSearchOnDragOverTarget(newTargetId) {
   breadthFirstSearchUnvisitedNodes.pushToTheBack(getStartNode());
 
   let tmpNode = null;
+  let visitedNodes = 0
 
   while (hasNext()) {
     tmpNode = getNextNode();
 
     tmpNode.setVisitedWithoutAnimation();
-
+    countVisited(visitedNodes++)
     if (tmpNode.id === newTargetId) {
       drawShorterPathOnDragOverTarget(newTargetId);
       return;

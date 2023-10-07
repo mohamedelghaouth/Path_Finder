@@ -5,6 +5,7 @@ import {
   setStartNode,
   setStartNodeFromId,
   hasNext,
+  countVisited
 } from "./utils.js";
 
 var dijkstraUnvisitedNodeSet = null;
@@ -27,16 +28,16 @@ function getNextNode() {
   return closestNode;
 }
 
-
-
 export async function dijkstra() {
   dijkstraUnvisitedNodeSet = new Set();
   setStartNode(dijkstraUnvisitedNodeSet);
   let tmpNode = null;
 
+  let visitedNodes = 0;
   while (hasNext(dijkstraUnvisitedNodeSet)) {
     tmpNode = getNextNode();
     tmpNode.setVisited();
+    countVisited(visitedNodes++);
 
     await sleep(10);
 
@@ -53,14 +54,15 @@ export function dijkstraOnDragOverStart(newStartId) {
   dijkstraUnvisitedNodeSet = new Set();
   setStartNodeFromId(dijkstraUnvisitedNodeSet, newStartId);
   let tmpNode = null;
+  let visitedNodes = 0;
 
   while (hasNext(dijkstraUnvisitedNodeSet)) {
     tmpNode = getNextNode();
     tmpNode.setVisitedWithoutAnimation();
-
+    countVisited(visitedNodes++);
 
     if (tmpNode.isTarget) {
-        drawShorterPathOnDragOverStart(newStartId);
+      drawShorterPathOnDragOverStart(newStartId);
       return;
     }
 
@@ -69,20 +71,21 @@ export function dijkstraOnDragOverStart(newStartId) {
 }
 
 export function dijkstraOnDragOverTarget(newTargetId) {
-    dijkstraUnvisitedNodeSet = new Set();
-    setStartNode();
-    let tmpNode = null;
-  
-    while (hasNext()) {
-      tmpNode = getNextNode();
-      tmpNode.setVisitedWithoutAnimation();
-  
-  
-      if (tmpNode.id === newTargetId) {
-          drawShorterPathOnDragOverTarget(newTargetId);
-        return;
-      }
-  
-      tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeSet);
+  dijkstraUnvisitedNodeSet = new Set();
+  setStartNode();
+  let tmpNode = null;
+  let visitedNodes = 0;
+
+  while (hasNext()) {
+    tmpNode = getNextNode();
+    tmpNode.setVisitedWithoutAnimation();
+    countVisited(visitedNodes++);
+
+    if (tmpNode.id === newTargetId) {
+      drawShorterPathOnDragOverTarget(newTargetId);
+      return;
     }
+
+    tmpNode.setNeighborsDijkstraWeight(dijkstraUnvisitedNodeSet);
   }
+}

@@ -5,6 +5,7 @@ import {
   setStartNode,
   setStartNodeFromId,
   hasNext,
+  countVisited
 } from "./utils.js";
 
 var aSearchUnvisitedNodeSet = null;
@@ -39,6 +40,7 @@ export async function aSearch() {
   let startNode = setStartNode(aSearchUnvisitedNodeSet);
   let tmpNode = null;
   let target = getTargetNode()
+  let visitedNodes = 0;
 
   while (hasNext(aSearchUnvisitedNodeSet)) {
     if (tmpNode == null) {
@@ -49,6 +51,7 @@ export async function aSearch() {
     }
 
     tmpNode.setVisited();
+    countVisited(visitedNodes++);
 
     await sleep(10);
 
@@ -66,6 +69,7 @@ export function aSearchOnDragOverStart(newStartId) {
   let startNode = setStartNodeFromId(aSearchUnvisitedNodeSet, newStartId);
   let tmpNode = null;
   let target = getTargetNode();
+  let visitedNodes = 0;
 
   while (hasNext(aSearchUnvisitedNodeSet)) {
     if (tmpNode == null) {
@@ -76,6 +80,7 @@ export function aSearchOnDragOverStart(newStartId) {
     }
 
     tmpNode.setVisitedWithoutAnimation();
+    countVisited(visitedNodes++);
 
     if (tmpNode.isTarget) {
       drawShorterPathOnDragOverStart(newStartId);
@@ -92,6 +97,7 @@ export function aSearchOnDragOverTarget(newTargetId) {
   let startNode = setStartNode(aSearchUnvisitedNodeSet);
   let tmpNode = null;
   let target = getNode(newTargetId);
+  let visitedNodes = 0;
 
   while (hasNext(aSearchUnvisitedNodeSet)) {
     if (tmpNode == null) {
@@ -101,6 +107,7 @@ export function aSearchOnDragOverTarget(newTargetId) {
       tmpNode = getNextNode();
     }
     tmpNode.setVisitedWithoutAnimation();
+    countVisited(visitedNodes++);
 
     if (tmpNode.id === newTargetId) {
       drawShorterPathOnDragOverTarget(newTargetId);

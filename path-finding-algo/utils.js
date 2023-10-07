@@ -1,11 +1,11 @@
 export function drawShorterPathOnDragOverStart(newStartId) {
   let currNode = getTargetNode();
-  let count = 1;
+  let shortPathNodesNumber = 1
 
   while (currNode && currNode.id !== newStartId) {
     currNode.setToPartOfTheShortPath();
+    countShortPath(shortPathNodesNumber++)
     currNode = currNode.parent;
-    count++;
   }
 
   currNode && currNode.setToPartOfTheShortPath();
@@ -13,9 +13,11 @@ export function drawShorterPathOnDragOverStart(newStartId) {
 
 export function drawShorterPathOnDragOverTarget(newTargetId) {
   let currNode = getNode(newTargetId);
+  let shortPathNodesNumber = 1
 
   while (!currNode.isStart) {
     currNode.setToPartOfTheShortPath();
+    countShortPath(shortPathNodesNumber++)
     currNode = currNode.parent;
   }
   currNode.setToPartOfTheShortPath();
@@ -23,9 +25,12 @@ export function drawShorterPathOnDragOverTarget(newTargetId) {
 
 export async function drawShorterPath() {
   let currNode = getTargetNode();
+  let shortPathNodesNumber = 1
+
 
   while (!currNode.isStart) {
     currNode.setToPartOfTheShortPath();
+    countShortPath(shortPathNodesNumber++)
     await sleep(10);
     currNode = currNode.parent;
   }
@@ -52,4 +57,17 @@ export function hasNext(unvisitedNode) {
   }
 
   return false;
+}
+
+
+export function countVisited(visitedNodes){
+  //let visitedNodes = document.querySelectorAll(".visited, .visited-non-animation").length
+  document.getElementById("visited-node-number").innerHTML = visitedNodes;
+
+}
+
+export function countShortPath(shortPathNodes){
+  //let shortPathNodes = document.querySelectorAll(".short-path-node").length
+  document.getElementById("short-path-node-number").innerHTML = shortPathNodes;
+
 }
